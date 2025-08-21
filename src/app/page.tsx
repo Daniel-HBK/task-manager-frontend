@@ -1,6 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import TaskList from "./components/TaskList";
+import AddTaskModal from "./components/AddTaskModal";
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleTaskAdded = () => {
+    // Trigger a refresh of the TaskList component
+    setRefreshKey((prev) => prev + 1);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b border-gray-200">
@@ -12,6 +24,25 @@ export default function Home() {
                 Track and manage your project tasks efficiently
               </p>
             </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Task
+            </button>
           </div>
         </div>
       </header>
@@ -34,7 +65,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <TaskList />
+          <TaskList key={refreshKey} />
         </div>
       </main>
 
@@ -45,10 +76,17 @@ export default function Home() {
             {new Date().getFullYear() === 2025
               ? 2025
               : "2025 - " + new Date().getFullYear()}{" "}
-            Task Manager. Built with Laravel API and Next.js
+            Task Manager.
           </p>
         </div>
       </footer>
+
+      {/* Add Task Modal */}
+      <AddTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onTaskAdded={handleTaskAdded}
+      />
     </div>
   );
 }
