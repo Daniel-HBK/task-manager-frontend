@@ -1,36 +1,214 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Manager - Laravel API + Next.js
 
-## Getting Started
+A clean and modern task management application built with Laravel (backend API) and Next.js (frontend).
 
-First, run the development server:
+## Project Structure
+
+```
+tasks-la/
+├── backend/          # Laravel API
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       └── TaskController.php
+│   │   └── Models/
+│   │       └── Task.php
+│   ├── routes/
+│   │   └── api.php
+│   └── config/
+│       └── cors.php
+└── frontend/         # Next.js Application
+    └── src/
+        └── app/
+            ├── components/
+            │   ├── TaskCard.tsx
+            │   └── TaskList.tsx
+            ├── types/
+            │   └── task.ts
+            └── page.tsx
+```
+
+## Features
+
+- **Laravel API**: RESTful endpoints serving task data with pagination
+- **Next.js Frontend**: Modern React-based UI with TypeScript
+- **Responsive Design**: Mobile-friendly grid/list layout
+- **Task Status**: Visual indicators for Pending, In Progress, and Done states
+- **Pagination**: Efficient data loading with customizable page size
+- **Clean Architecture**: Separated concerns with clear project structure
+
+## Prerequisites
+
+- PHP 8.1+
+- Composer
+- Node.js 18+
+- npm or yarn
+- SQLite (usually comes pre-installed with PHP)
+
+## Setup Instructions
+
+### Backend (Laravel API)
+
+1. Navigate to the backend directory:
+
+```bash
+cd backend
+```
+
+2. Install PHP dependencies:
+
+```bash
+composer install
+```
+
+3. Copy the environment file:
+
+```bash
+cp .env.example .env
+```
+
+4. Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+5. Create the SQLite database file:
+
+```bash
+touch database/database.sqlite
+```
+
+6. Run database migrations to create the tasks table:
+
+```bash
+php artisan migrate
+```
+
+7. Seed the database with initial tasks:
+
+```bash
+php artisan db:seed --class=TaskSeeder
+```
+
+8. Start the Laravel development server:
+
+```bash
+php artisan serve
+```
+
+The API will be available at `http://localhost:8000`
+
+### Frontend (Next.js)
+
+1. Open a new terminal and navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+2. Install Node dependencies:
+
+```bash
+npm install
+```
+
+3. Start the Next.js development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:8000](http://localhost:8000) with your browser to see the result.
+The application will be available at `http://localhost:8000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### GET /api/tasks
 
-## Learn More
+Returns paginated tasks with metadata.
 
-To learn more about Next.js, take a look at the following resources:
+**Query Parameters:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `page` (optional): Page number (default: 1)
+- `per_page` (optional): Items per page (default: 10)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Example:** `GET /api/tasks?page=2&per_page=6`
 
-## Deploy on Vercel
+### POST /api/tasks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create a new task.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Task Object Structure
+
+```json
+{
+  "id": 1,
+  "title": "Task Title",
+  "description": "Task description",
+  "status": "Pending" | "In Progress" | "Done",
+  "created_at": "2025-08-21T08:00:00.000000Z",
+  "updated_at": "2025-08-21T08:00:00.000000Z"
+}
+```
+
+### Creating a Task (POST /api/tasks)
+
+```json
+{
+  "title": "New Task",
+  "description": "Optional description",
+  "status": "Pending" // Optional, defaults to "Pending"
+}
+```
+
+## Database
+
+The application uses **SQLite** as the database, which is lightweight and requires no additional setup. The database file is stored at `backend/database/database.sqlite`.
+
+### Initial Task Data
+
+The database seeder includes 15 sample tasks.
+
+## Technologies Used
+
+### Backend
+
+- **Laravel 11**: PHP framework for building the API
+- **SQLite**: Lightweight database for storing tasks
+- **CORS**: Configured for cross-origin requests from Next.js
+- **Eloquent ORM**: Database abstraction layer
+
+### Frontend
+
+- **Next.js 14**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Hooks**: Modern state management
+
+## Development Notes
+
+- The Laravel API uses SQLite database for persistent storage
+- Tasks can be created via POST request (no authentication required)
+- CORS is configured to allow requests from `http://localhost:3000`
+- The frontend fetches paginated data with customizable page size (3, 6, 9, or 12 items)
+- Responsive grid layout adapts to screen size (1-3 columns)
+- Loading states and error handling are implemented
+- Pagination controls show current page, total items, and navigation buttons
+
+## Database Management
+
+- **Reset database**: `php artisan migrate:fresh --seed`
+- **Run only migrations**: `php artisan migrate`
+- **Seed database**: `php artisan db:seed --class=TaskSeeder`
+
+## Running Both Applications
+
+For the complete experience, run both servers simultaneously:
+
+1. Terminal 1 (Laravel): `cd backend && php artisan serve`
+2. Terminal 2 (Next.js): `cd frontend && npm run dev`
+3. Open browser to `http://localhost:3001`
+
+## License
+
+This project is open source and available for educational purposes.
